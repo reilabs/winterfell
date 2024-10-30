@@ -175,6 +175,11 @@ impl<H: Hasher> MerkleTree<H> {
     pub fn leaves(&self) -> &[H::Digest] {
         &self.leaves
     }
+    /// Returns leaf nodes of the tree.
+    pub fn nodes(&self) -> &[H::Digest] {
+        &self.nodes
+    }
+
 
     // PROVING METHODS
     // --------------------------------------------------------------------------------------------
