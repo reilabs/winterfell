@@ -26,7 +26,7 @@
 //! need to be in tens of thousands. And even for hundreds of thousands of asserted values, the
 //! verification time should not exceed 50 ms.
 
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 #[macro_use]
 extern crate alloc;
