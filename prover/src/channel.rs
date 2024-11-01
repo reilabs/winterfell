@@ -134,6 +134,8 @@ where
     /// The positions are drawn from the public coin uniformly at random. Duplicate positions
     /// are removed from the returned vector.
     pub fn get_query_positions(&mut self) -> Vec<usize> {
+        // return vec![0, 93, 209, 236, 369, 437, 480, 526, 554, 615, 654, 707, 713, 838, 898, 989, 1041, 1107, 1142, 1215, 1505, 1535, 1537, 1556, 1660, 1784, 1976];
+        
         let num_queries = self.context.options().num_queries();
         let lde_domain_size = self.context.lde_domain_size();
         let mut positions = self

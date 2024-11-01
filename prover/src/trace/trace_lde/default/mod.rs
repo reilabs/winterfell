@@ -159,6 +159,9 @@ where
         // copy main trace segment values into the frame
         frame.current_mut().copy_from_slice(self.main_segment_lde.row(lde_step));
         frame.next_mut().copy_from_slice(self.main_segment_lde.row(next_lde_step));
+
+        println!("read_main_trace_frame_into({:?}, {:?})", lde_step, frame);
+
     }
 
     /// Reads current and next rows from the auxiliary trace segment into the specified frame.
@@ -174,6 +177,9 @@ where
         let segment = self.aux_segment_lde.as_ref().expect("expected aux segment to be present");
         frame.current_mut().copy_from_slice(segment.row(lde_step));
         frame.next_mut().copy_from_slice(segment.row(next_lde_step));
+
+        println!("read_aux_trace_frame_into({:?}, {:?})", lde_step, frame);
+
     }
 
     fn read_lagrange_kernel_frame_into(
@@ -197,6 +203,9 @@ where
 
             frame.push(aux_segment.get(lagrange_kernel_aux_column_idx, next_lde_step));
         }
+
+        println!("read_lagrange_kernel_frame_into({:?}, {:?}, {:?})", lde_step, lagrange_kernel_aux_column_idx, frame);
+
     }
 
     /// Returns trace table rows at the specified positions along with Merkle authentication paths
@@ -209,12 +218,16 @@ where
             positions,
         )];
 
+        println!("query-positions({:?})", positions);
+        println!("query-main({:?})", result);
+
         // build queries for the auxiliary trace segment
         if let Some(ref segment_tree) = self.aux_segment_tree {
             let segment_lde =
                 self.aux_segment_lde.as_ref().expect("expected aux segment to be present");
 
             let aux = build_segment_queries(segment_lde, segment_tree, positions);
+            println!("query-aux({:?})", aux);
             result.push(aux);
         }
 
@@ -304,6 +317,14 @@ where
     let trace_proof = segment_tree
         .prove_batch(positions)
         .expect("failed to generate a Merkle proof for trace queries");
+
+    println!("trace-proof-leaves({:?})", trace_proof.leaves);
+    println!("trace-proof-nodes({:?})", trace_proof.nodes);
+    println!("trace-proof-depth({:?})", trace_proof.depth);
+
+    println!("full-leaves: {:?}", segment_tree.leaves());
+    println!("full-nodes: {:?}", segment_tree.nodes());
+
 
     Queries::new(trace_proof, trace_states)
 }
