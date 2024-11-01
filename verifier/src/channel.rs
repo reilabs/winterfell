@@ -64,16 +64,6 @@ impl<E: FieldElement, H: ElementHasher<BaseField = E::BaseField>> VerifierChanne
             gkr_proof,
         } = proof;
 
-        println!("proof-context {:?}", context);
-        println!("proof-uniq-queries {:?}", num_unique_queries);
-        println!("proof-commitments {:?}", commitments);
-        println!("proof-trace-queries {:?}", trace_queries);
-        println!("proof-constraint-queries {:?}", constraint_queries);
-        println!("proof-ood-frame {:?}", ood_frame);
-        println!("proof-fri-proof {:?}", fri_proof);
-        println!("proof-pow-nonce {:?}", pow_nonce);
-        println!("proof-gkr-proof {:?}", gkr_proof);
-
         // make sure AIR and proof base fields are the same
         if E::BaseField::get_modulus_le_bytes() != context.field_modulus_bytes() {
             return Err(VerifierError::InconsistentBaseField);

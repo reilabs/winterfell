@@ -30,8 +30,6 @@ impl<E: FieldElement> TracePolyTable<E> {
     // --------------------------------------------------------------------------------------------
     /// Creates a new table of trace polynomials from the provided main trace segment polynomials.
     pub fn new(main_trace_polys: ColMatrix<E::BaseField>) -> Self {
-        println!("trace-poly-new {:?}", main_trace_polys);
-
         Self {
             main_trace_polys,
             aux_trace_polys: None,
@@ -48,9 +46,6 @@ impl<E: FieldElement> TracePolyTable<E> {
         aux_trace_polys: ColMatrix<E>,
         lagrange_kernel_column_idx: Option<usize>,
     ) {
-        println!("trace-poly-aux {:?}", aux_trace_polys);
-        println!("trace-poly-aux-idx {:?}", lagrange_kernel_column_idx);
-
         assert!(self.aux_trace_polys.is_none());
         assert_eq!(
             self.main_trace_polys.num_rows(),
