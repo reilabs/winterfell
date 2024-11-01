@@ -83,6 +83,7 @@ impl<B: StarkField, H: ElementHasher<BaseField = B>> RandomCoin for DefaultRando
     // --------------------------------------------------------------------------------------------
     /// Returns a new random coin instantiated with the provided `seed`.
     fn new(seed: &[Self::BaseField]) -> Self {
+        println!("query-positions new coin {:?}", seed);
         let seed = H::hash_elements(seed);
         Self { seed, counter: 0 }
     }
@@ -147,6 +148,7 @@ impl<B: StarkField, H: ElementHasher<BaseField = B>> RandomCoin for DefaultRando
             // check if the bytes can be converted into a valid field element; if they can,
             // return; otherwise try again
             if let Some(element) = E::from_random_bytes(bytes) {
+                println!("query-positions draw single {:?}", element);
                 return Ok(element);
             }
         }
@@ -196,6 +198,9 @@ impl<B: StarkField, H: ElementHasher<BaseField = B>> RandomCoin for DefaultRando
         assert!(domain_size.is_power_of_two(), "domain size must be a power of two");
         assert!(num_values < domain_size, "number of values must be smaller than domain size");
 
+
+        println!("query-positions::draw_integers {:?} {} {} {}", self.seed, num_values, domain_size, nonce);
+
         // reseed with nonce
         self.seed = H::merge_with_int(self.seed, nonce);
         self.counter = 0;
@@ -212,6 +217,7 @@ impl<B: StarkField, H: ElementHasher<BaseField = B>> RandomCoin for DefaultRando
             // convert to integer and limit the integer to the number of bits which can fit
             // into the specified domain
             let value = (u64::from_le_bytes(bytes) & v_mask) as usize;
+            println!("query-positions draw value {:?}", value);
 
             values.push(value);
             if values.len() == num_values {

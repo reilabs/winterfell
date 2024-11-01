@@ -4,7 +4,7 @@
 // LICENSE file in the root directory of this source tree.
 
 use alloc::vec::Vec;
-use core::marker::PhantomData;
+use core::{marker::PhantomData, num};
 
 use air::{
     proof::{Commitments, Context, OodFrame, Proof, Queries, TraceOodFrame},
@@ -74,12 +74,14 @@ where
     /// Commits the prover the extended execution trace.
     pub fn commit_trace(&mut self, trace_root: H::Digest) {
         self.commitments.add::<H>(&trace_root);
+        println!("query-positions reseed trace {:?}", trace_root);
         self.public_coin.reseed(trace_root);
     }
 
     /// Commits the prover to the evaluations of the constraint composition polynomial.
     pub fn commit_constraints(&mut self, constraint_root: H::Digest) {
         self.commitments.add::<H>(&constraint_root);
+        println!("query-positions reseed constraints {:?}", constraint_root);
         self.public_coin.reseed(constraint_root);
     }
 
@@ -87,6 +89,7 @@ where
     /// also reseeds the public coin with the hashes of the evaluation frame states.
     pub fn send_ood_trace_states(&mut self, trace_ood_frame: &TraceOodFrame<E>) {
         let trace_states_hash = self.ood_frame.set_trace_states::<E, H>(trace_ood_frame);
+        println!("query-positions reseed ood trace {:?}", trace_states_hash);
         self.public_coin.reseed(trace_states_hash);
     }
 
@@ -94,6 +97,7 @@ where
     /// point. This also reseeds the public coin wit the hash of the evaluations.
     pub fn send_ood_constraint_evaluations(&mut self, evaluations: &[E]) {
         self.ood_frame.set_constraint_evaluations(evaluations);
+        println!("query-positions reseed ood constraints {:?}", evaluations);
         self.public_coin.reseed(H::hash_elements(evaluations));
     }
 
@@ -134,18 +138,20 @@ where
     /// The positions are drawn from the public coin uniformly at random. Duplicate positions
     /// are removed from the returned vector.
     pub fn get_query_positions(&mut self) -> Vec<usize> {
-        // return vec![0, 93, 209, 236, 369, 437, 480, 526, 554, 615, 654, 707, 713, 838, 898, 989, 1041, 1107, 1142, 1215, 1505, 1535, 1537, 1556, 1660, 1784, 1976];
-        
         let num_queries = self.context.options().num_queries();
         let lde_domain_size = self.context.lde_domain_size();
+        println!("query-positions get {} {} {}", num_queries, lde_domain_size, self.pow_nonce);
         let mut positions = self
             .public_coin
             .draw_integers(num_queries, lde_domain_size, self.pow_nonce)
             .expect("failed to draw query position");
+        println!("query-positions drawn {:?}", positions);
 
         // remove any duplicate positions from the list
         positions.sort_unstable();
         positions.dedup();
+
+        println!("query-positions dedup {:?}", positions);
 
         positions
     }
@@ -166,6 +172,8 @@ where
             .into_par_iter()
             .find_any(|&nonce| self.public_coin.check_leading_zeros(nonce) >= grinding_factor)
             .expect("nonce not found");
+
+        println!("query-positions grind {}", nonce);
 
         self.pow_nonce = nonce;
     }

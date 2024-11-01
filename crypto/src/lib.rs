@@ -16,7 +16,7 @@
 //!   [RandomCoin] implementation uses a cryptographic hash function to generate pseudo-random
 //!   elements form a seed.
 
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 #[macro_use]
 extern crate alloc;

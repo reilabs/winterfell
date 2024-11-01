@@ -338,6 +338,7 @@ pub trait Prover {
 
                 // commit to the LDE of the extended auxiliary trace segment by writing the root of
                 // its Merkle tree into the channel
+                println!("query-positions commit aux {:?}", aux_segment_root);
                 channel.commit_trace(aux_segment_root);
 
                 drop(span);
@@ -574,6 +575,7 @@ pub trait Prover {
 
         // commit to the LDE of the main trace by writing the root of its Merkle tree into
         // the channel
+        println!("query-positions commit main {:?}", main_trace_root);
         channel.commit_trace(main_trace_root);
 
         (trace_lde, trace_polys)

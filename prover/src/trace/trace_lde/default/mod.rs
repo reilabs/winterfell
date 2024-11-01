@@ -142,6 +142,9 @@ where
         // save the lde and commitment
         self.aux_segment_lde = Some(aux_segment_lde);
         let root_hash = *aux_segment_tree.root();
+
+        println!("set-aux-trace root {:?}", aux_segment_tree.root());
+
         self.aux_segment_tree = Some(aux_segment_tree);
 
         (aux_segment_polys, root_hash)
